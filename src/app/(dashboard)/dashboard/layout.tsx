@@ -1,6 +1,8 @@
 import FriendRequestSidebarOptions from "@/components/FriendRequestSidebarOptions";
 import { Icon, Icons } from "@/components/Icons";
+import SidebarChatList from "@/components/SidebarChatList";
 import SignoutButton from "@/components/SignOutButton";
+import { getFriendsByUserId } from "@/helpers/getFriendsByUserId";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -8,7 +10,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FC, ReactNode } from "react";
-import { number } from "zod";
 
 interface LayoutProps {
   children: ReactNode;
@@ -34,6 +35,8 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
 
+  const friends = await getFriendsByUserId(session.user.id);
+
   const unseenRequestCount = (
     (await fetchRedis(
       "smembers",
@@ -49,16 +52,16 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
           <Icons.Logo className="h-8 w-auto text-indigo-600" />
         </Link>
 
-        {/* {friends.length > 0 ? (
+        {friends.length > 0 ? (
           <div className="text-xs font-semibold leading-6 text-gray-400">
             Your chats
           </div>
-        ) : null} */}
+        ) : null}
 
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
             <li>
-              {/* <SidebarChatList sessionId={session.user.id} friends={friends} /> */}
+              <SidebarChatList sessionId={session.user.id} friends={friends} />
             </li>
             <li>
               <div className="text-xs font-semibold leading-6 text-gray-400">
