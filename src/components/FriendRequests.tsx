@@ -1,7 +1,7 @@
 "use client";
 
 import { pusherClient } from "@/lib/pusher";
-import { toPuhserKey } from "@/lib/utils";
+import { toPusherKey } from "@/lib/utils";
 import axios from "axios";
 import { Check, UserPlus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 
   useEffect(() => {
     pusherClient.subscribe(
-      toPuhserKey(`user:${sessionId}:incoming_friend_requests`)
+      toPusherKey(`user:${sessionId}:incoming_friend_requests`)
     );
 
     const friendRequestsHandler = ({
@@ -37,7 +37,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 
     return () => {
       pusherClient.unsubscribe(
-        toPuhserKey(`user:${sessionId}:incoming_friend_requests`)
+        toPusherKey(`user:${sessionId}:incoming_friend_requests`)
       );
       pusherClient.unbind("incoming_friend_requests", friendRequestsHandler);
     };
