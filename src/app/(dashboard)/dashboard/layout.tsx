@@ -1,28 +1,29 @@
-import FriendRequestSidebarOptions from "@/components/FriendRequestSidebarOptions";
 import { Icon, Icons } from "@/components/Icons";
-import SidebarChatList from "@/components/SidebarChatList";
-import SignoutButton from "@/components/SignOutButton";
-import { getFriendsByUserId } from "@/helpers/getFriendsByUserId";
-import { fetchRedis } from "@/helpers/redis";
+import SignOutButton from "@/components/SignOutButton";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FC, ReactNode } from "react";
+import FriendRequestSidebarOptions from "@/components/FriendRequestSidebarOptions";
+import { fetchRedis } from "@/helpers/redis";
+import { getFriendsByUserId } from "@/helpers/getFriendsByUserId";
+import SidebarChatList from "@/components/SidebarChatList";
+import MobileChatLayout from "@/components/MobileChatLayout";
+import { SidebarOption } from "@/types/typings";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
-interface SidebarOptions {
-  id: number;
-  name: string;
-  href: string;
-  Icon: Icon;
-}
+// Done after the video and optional: add page metadata
+export const metadata = {
+  title: "FriendZone | Dashboard",
+  description: "Your dashboard",
+};
 
-const sidebarOptions: SidebarOptions[] = [
+const sidebarOptions: SidebarOption[] = [
   {
     id: 1,
     name: "Add friend",
@@ -31,11 +32,12 @@ const sidebarOptions: SidebarOptions[] = [
   },
 ];
 
-const Layout: FC<LayoutProps> = async ({ children }) => {
+const Layout = async ({ children }: LayoutProps) => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
 
   const friends = await getFriendsByUserId(session.user.id);
+  console.log("friends", friends);
 
   const unseenRequestCount = (
     (await fetchRedis(
@@ -46,7 +48,15 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
 
   return (
     <div className="w-full flex h-screen">
-      <div className="md:hidden"></div>
+      <div className="md:hidden">
+        <MobileChatLayout
+          friends={friends}
+          session={session}
+          sidebarOptions={sidebarOptions}
+          unseenRequestCount={unseenRequestCount}
+        />
+      </div>
+
       <div className="hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
         <Link href="/dashboard" className="flex h-16 shrink-0 items-center">
           <Icons.Logo className="h-8 w-auto text-indigo-600" />
@@ -117,7 +127,7 @@ const Layout: FC<LayoutProps> = async ({ children }) => {
                 </div>
               </div>
 
-              <SignoutButton className="h-full aspect-square" />
+              <SignOutButton className="h-full aspect-square" />
             </li>
           </ul>
         </nav>
