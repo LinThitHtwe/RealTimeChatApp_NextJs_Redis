@@ -1,6 +1,5 @@
 # Realtime Chat with NextJs and Redis
 
-
 ### Tools use
 
 - NextJs
@@ -9,6 +8,16 @@
 - Redis
 - TailwindCss
 
+### Features 
+
+- You can login or signup with Google.
+- You can add friend by their email ( Only to the person who have already created account in this )
+- You can accept or reject friends
+- You can chat with your friends.
+
+### Credit
+
+This is a tutorial project by [joschan21](https://github.com/joschan21/nextjs-realtime-chat)
 
 <details>
 
